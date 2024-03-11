@@ -1,0 +1,41 @@
+Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+V.Local.sfiles.Declare(String)
+V.Local.sdir.declare(String)
+V.Local.iX.Declare(Long)
+
+F.ODBC.Connection!conx.OpenConnection(V.Ambient.ccon,V.Ambient.CUser,V.Ambient.CPass)
+
+F.ODBC.Connection!conx.Execute("DELETE FROM HF_LOG")
+F.ODBC.Connection!conx.Execute("DELETE FROM HF_QUEUE")
+F.ODBC.Connection!conx.Execute("DELETE FROM HF_QUEUEDetail")
+F.ODBC.Connection!conx.Execute("DELETE FROM HF_QUEUELines")
+
+F.Intrinsic.String.Concat(V.Caller.globaldir,"\HFQUEUE\",V.Local.sdir)
+
+F.Intrinsic.File.GetFileList(V.Local.sdir,"",V.Local.sfiles)
+		F.Intrinsic.String.Split(V.Local.sfiles,":",V.Local.sfiles)
+		F.Intrinsic.Debug.Stop
+
+		F.Intrinsic.Control.For(V.Local.iX,0,V.Local.sfiles.UBound,1)
+			F.Intrinsic.Control.If(V.Local.sfiles(v.local.ix).Trim,<>,"")
+				F.Intrinsic.String.Concat(V.Local.sdir,V.Local.sfiles(v.Local.iX),V.Local.sfiles(v.Local.iX))
+				F.Intrinsic.File.DeleteFile(V.Local.sfiles(v.Local.iX))
+			F.Intrinsic.Control.Endif
+		F.Intrinsic.Control.Next(V.Local.iX)
+
+F.Intrinsic.UI.Msgbox("HF Queue Cleared")
+F.Intrinsic.Control.End
+
+Program.Sub.Main.End
+
+Program.Sub.Comments.Start
+${$0$}$ATG_ClearHFtables$}$JND$}$5/21/2015
+Program.Sub.Comments.End
+
